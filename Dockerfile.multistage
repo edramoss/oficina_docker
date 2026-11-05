@@ -1,0 +1,26 @@
+# --- Estágio de build: imagem completa, descartada ao final ---
+FROM python:3.14.7-trixie AS builder
+
+COPY app/requirements.txt .
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.14.7-slim-trixie AS runtime
+
+RUN useradd --system --uid 1000 --no-create-home app
+
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+COPY app/app.py .
+
+ENV APP_VARIANT=multistage PYTHONUNBUFFERED=1 PATH=/opt/venv/bin:$PATH
+
+USER app
+EXPOSE 8000
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/saude', timeout=2)"]
+
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "--no-control-socket", "app:app"]
+CMD ["--workers", "2"]

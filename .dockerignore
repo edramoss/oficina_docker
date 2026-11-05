@@ -1,0 +1,4 @@
+# Só a pasta app/ entra no contexto de build.
+*
+!app/
+app/__pycache__/

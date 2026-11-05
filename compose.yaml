@@ -1,0 +1,40 @@
+# Só a aplicação. A stack de logs está em graylog/compose.yaml.
+name: oficina
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.multistage
+    image: oficina-app:multistage
+    container_name: oficina-app
+    # Substitui o CMD da imagem; o ENTRYPOINT continua o mesmo.
+    command: ["--workers", "2"]
+    # Depois de subir a stack de logs, descomente para enviar os logs ao rsyslog:
+    # environment:
+    #   RSYSLOG_HOST: rsyslog
+    ports:
+      - "8080:8000"
+    networks:
+      aplicacao:
+        ipv4_address: 172.30.10.10
+    # Limita os recursos do container.
+    mem_limit: 256m
+    cpus: "0.50"
+    # Evita que os logs do Docker ocupem o disco inteiro.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Opções: "no" (padrão), always, unless-stopped, on-failure.
+    restart: always
+
+networks:
+  aplicacao:
+    name: oficina_aplicacao
+    ipam:
+      config:
+        - subnet: 172.30.10.0/24
+          gateway: 172.30.10.1
+          ip_range: 172.30.10.128/25

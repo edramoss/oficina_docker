@@ -1,0 +1,20 @@
+# Segredos: só os arquivos de exemplo vão para o Git.
+.env
+.env.*
+!.env.example
+graylog/admin_password.txt
+*.pem
+*.key
+
+# Material do apresentador.
+ROTEIRO*
+gerar-pdf.py
+images/
+
+# Arquivos gerados.
+__pycache__/
+*.pyc
+.venv/
+*.tar
+.~lock.*
+.claude/
