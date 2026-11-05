@@ -1,14 +1,10 @@
 # Enable the WSL 2 feature on Windows
 wsl --install
 
-# Download the Docker Desktop installer
-Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
-
-# Install Docker Desktop
-Start-Process -Wait -FilePath .\DockerDesktopInstaller.exe
-
-# Clean up the installer file
-Remove-Item .\DockerDesktopInstaller.exe
-
+´´´
+wsl --install debian
+# or
+wsl --install -d debian
+´´´
 
 
